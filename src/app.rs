@@ -1,10 +1,12 @@
 use axum::extract::{Path, Query};
-use axum::response::{IntoResponse, Json};
+use axum::middleware;
+use axum::response::{IntoResponse, Json, Response};
 use axum::routing::{get, get_service};
 
 use serde::Deserialize;
 use serde_json::json;
 use tower_http::services::ServeDir;
+use tracing::info;
 
 use crate::web;
 
@@ -12,7 +14,13 @@ pub fn app() -> axum::Router {
     axum::Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
+        .layer(middleware::map_response(main_response_mapper))
         .fallback_service(get_service(ServeDir::new("./")))
+}
+
+async fn main_response_mapper(res: Response) -> Response {
+    info!("{:?}", res);
+    res
 }
 
 fn routes_hello() -> axum::Router {
