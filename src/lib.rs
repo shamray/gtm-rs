@@ -1,11 +1,18 @@
 use axum::extract::{Path, Query};
 use axum::response::{IntoResponse, Json};
-use axum::routing::get;
+use axum::routing::{get, get_service};
 
 use serde::Deserialize;
 use serde_json::json;
+use tower_http::services::ServeDir;
 
 pub fn app() -> axum::Router {
+    axum::Router::new()
+        .merge(routes_hello())
+        .fallback_service(get_service(ServeDir::new("./")))
+}
+
+fn routes_hello() -> axum::Router {
     axum::Router::new()
         .route("/hello", get(hello_world))
         .route("/hello2/{name}", get(hello_path))
