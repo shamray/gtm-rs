@@ -5,7 +5,9 @@ pub async fn spawn_test_server() -> anyhow::Result<SocketAddr> {
     let addr = listener.local_addr()?;
 
     tokio::spawn(async move {
-        axum::serve(listener, gtm::app::app()?).await.unwrap();
+        axum::serve(listener, gtm::app::app().unwrap())
+            .await
+            .unwrap();
     });
 
     Ok(addr)
