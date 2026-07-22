@@ -5,17 +5,24 @@ use axum::routing::{get, get_service};
 
 use serde::Deserialize;
 use serde_json::json;
+use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 use tracing::info;
 
+use crate::model::ModelController;
 use crate::web;
 
-pub fn app() -> axum::Router {
-    axum::Router::new()
+pub fn app() -> anyhow::Result<axum::Router> {
+    let mc = ModelController::new()?;
+    let router = axum::Router::new()
         .merge(routes_hello())
         .merge(web::routes_login::routes())
+        .nest("/api", web::routes_tickets::routes(mc))
         .layer(middleware::map_response(main_response_mapper))
-        .fallback_service(get_service(ServeDir::new("./")))
+        .layer(CookieManagerLayer::new())
+        .fallback_service(get_service(ServeDir::new("./")));
+
+    Ok(router)
 }
 
 async fn main_response_mapper(res: Response) -> Response {

@@ -9,6 +9,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     #[error("login failed")]
     LoginFail,
+    #[error("Ticket delete - ID not found")]
+    TicketDeleteFailIdNotFound { id: u64 },
 }
 
 impl IntoResponse for Error {

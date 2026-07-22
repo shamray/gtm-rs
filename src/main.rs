@@ -9,7 +9,7 @@ async fn main() -> anyhow::Result<()> {
         .unwrap();
     println!("Listening on {}", listener.local_addr().unwrap());
 
-    axum::serve(listener, app::app()).await?;
+    axum::serve(listener, app::app()?).await?;
 
     Ok(())
 }
