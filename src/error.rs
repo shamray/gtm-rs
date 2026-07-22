@@ -11,6 +11,8 @@ pub enum Error {
     LoginFail,
     #[error("Authentication - No token in cookies")]
     AuthFailNoAuthTokenCookie,
+    #[error("Authentication - Wrong token format")]
+    AuthFailTokenWrongFormat,
     #[error("Ticket delete - ID not found")]
     TicketDeleteFailIdNotFound { id: u64 },
 }

@@ -3,8 +3,9 @@ use axum::extract::{Path, State};
 use axum::routing::{delete, post};
 use tracing::info;
 
+use crate::Result;
+use crate::ctx::Ctx;
 use crate::model::{ModelController, Ticket, TicketForCreate};
-use crate::{Error, Result};
 
 pub fn routes(mc: ModelController) -> axum::Router {
     axum::Router::new()
@@ -15,11 +16,12 @@ pub fn routes(mc: ModelController) -> axum::Router {
 
 async fn create_ticket(
     State(mc): State<ModelController>,
+    ctx: Ctx,
     Json(ticket_fc): Json<TicketForCreate>,
 ) -> Result<Json<Ticket>> {
     info!("{:<12} - create_ticket", "HANDLER");
 
-    let ticket = mc.create_ticket(ticket_fc).await?;
+    let ticket = mc.create_ticket(&ctx, ticket_fc).await?;
 
     Ok(Json(ticket))
 }
