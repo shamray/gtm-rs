@@ -1,7 +1,8 @@
 use axum::extract::State;
-use axum::response::{IntoResponse, Json};
+use axum::response::Json;
 use axum::routing::get;
 
+use crate::error::Result;
 use crate::model::*;
 use crate::repo;
 
@@ -17,11 +18,17 @@ pub struct AppState {
     games_repo: repo::Games,
 }
 
-async fn list_games(State(state): State<AppState>) -> impl IntoResponse {
+async fn list_games(State(state): State<AppState>) -> Json<Vec<Game>> {
     let games = state.games_repo.find();
     Json(games)
 }
 
-async fn import_game(State(state): State<AppState>) -> impl IntoResponse {
-    Json({})
+async fn import_game(
+    State(state): State<AppState>,
+    Json(payload): Json<import::Game>,
+) -> Result<Json<Game>> {
+    let imported_game: import::Game = payload.into();
+    let game = state.games_repo.insert(imported_game)?;
+
+    Ok(Json(game))
 }

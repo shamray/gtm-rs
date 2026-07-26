@@ -1,9 +1,5 @@
-use axum::extract::{FromRef, Path, Query};
 use axum::middleware;
 use axum::response::{IntoResponse, Json, Response};
-use axum::routing::{get, get_service};
-
-use serde::Deserialize;
 use serde_json::json;
 use tower_cookies::CookieManagerLayer;
 use tracing::info;

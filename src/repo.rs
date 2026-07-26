@@ -16,14 +16,16 @@ impl Games {
     }
 
     pub fn find(&self) -> Vec<Game> {
-        vec![]
+        let store = self.games.lock().unwrap();
+
+        store.iter().flatten().cloned().collect()
     }
 
-    pub fn insert(&self, game: Game) -> Result<Game> {
+    pub fn insert(&self, game: import::Game) -> Result<Game> {
         let mut store = self.games.lock().unwrap();
 
         let id = store.len() as u64;
-        let game = Game { id };
+        let game = Game::from_import(id, game);
         store.push(Some(game.clone()));
 
         Ok(game)
