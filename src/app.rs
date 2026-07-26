@@ -1,4 +1,4 @@
-use axum::extract::{Path, Query};
+use axum::extract::{FromRef, Path, Query};
 use axum::middleware;
 use axum::response::{IntoResponse, Json, Response};
 use axum::routing::{get, get_service};
@@ -12,8 +12,10 @@ use uuid::Uuid;
 use crate::{Error, http};
 
 pub fn app() -> anyhow::Result<axum::Router> {
+    // let app_state = App::default();
     let router = axum::Router::new()
         .merge(http::health::routes())
+        .nest("/api/games", http::games::routes())
         .layer(middleware::map_response(main_response_mapper))
         .layer(CookieManagerLayer::new());
 
