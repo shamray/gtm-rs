@@ -1,7 +1,6 @@
 use axum::middleware;
 use axum::response::{IntoResponse, Json, Response};
 use serde_json::json;
-use tower_cookies::CookieManagerLayer;
 use tracing::info;
 use uuid::Uuid;
 
@@ -12,8 +11,7 @@ pub fn app() -> anyhow::Result<axum::Router> {
     let router = axum::Router::new()
         .merge(http::health::routes())
         .nest("/api/games", http::games::routes())
-        .layer(middleware::map_response(main_response_mapper))
-        .layer(CookieManagerLayer::new());
+        .layer(middleware::map_response(main_response_mapper));
 
     Ok(router)
 }
